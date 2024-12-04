@@ -78,6 +78,14 @@ class game():
                 self.hi_score = 0
             def Display(self):
                 screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
+
+
+        class Score_Endless(Score):
+            def __init__(self):
+                super().__init__()
+                self.hi_score = 0
+            def Display(self):
+                super().Display(self)
                 screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
             def Increase_Score(self,amount):
                 self.curr_score += amount
@@ -88,6 +96,21 @@ class game():
                 self.Display()
             def New_Hi_Score(self):
                 self.hi_score = self.curr_score
+                
+        class Score_1P(Score):
+            def __init__(self):
+                super().__init__()
+                self.team1_score = 0
+                self.team2_score = 0
+                self.curr_score = "0 : 0"
+            def Winning_Team(self,team):
+                if team = team1:
+                    self.team1_score += 1
+                else:
+                    self.team2_score += 1
+            def Update_score(self):
+                self.curr_score = (str(self.team1_score)+" : "+str(self.team2_score))
+                self.Display(self)
 
 
         class Wall():
@@ -152,7 +175,7 @@ class game():
 
 
 
-        Scoreboard = Score()
+        Scoreboard = Score_Endless()
         Match_Timer = Timer()
         game = True
         draw_map()
