@@ -106,38 +106,10 @@ class game():
         player = Player((random.randint(2,10)*100),(random.randint(4,6)*100))
 
         def draw_map():
-            map = [
-                "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-                "W                              W",
-                "W                              W",
-                "W  L                           W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-            ]
-
-            x = 0
-            y = 0
-            for row in map:
-                for column in row:
-                    if column == "W":
-                        Wall((x,y),40,40)
-                    elif column == "L":
-                        haha = pygame.Rect(x,y,40,40)
-                    x += 40
-                y += 40
-                x = 0
+            Wall((0,0),1280,30)
+            Wall((0,690),1280,30)
+            Wall((0,0),30,720)
+            Wall((1250,0),30,720)
 
         def press_key():
             key = pygame.key.get_pressed()
