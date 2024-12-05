@@ -91,14 +91,14 @@ class game():
 
 
         class Wall():
-            def __init__(self,pos,size):
+            def __init__(self,pos,length, height):
                 Temp_Walls.append(self)
-                self.rect = pygame.Rect(pos[0],pos[1],size,size)
+                self.rect = pygame.Rect(pos[0],pos[1],length,height)
 
 
         class Trail(Wall):
             def __init__(self, pos, size, parent):
-                super().__init__(pos, size)
+                super().__init__(pos, size, size)
                 self.parent = parent
 
         Walls = []
@@ -132,7 +132,7 @@ class game():
             for row in map:
                 for column in row:
                     if column == "W":
-                        Wall((x,y),40)
+                        Wall((x,y),40,40)
                     elif column == "L":
                         haha = pygame.Rect(x,y,40,40)
                     x += 40
