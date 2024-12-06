@@ -9,12 +9,16 @@ class game():
     
     def game(self):
         class Bike():
-            def __init__(self,x,y):
-                self.x = x
-                self.y = y
+            def __init__(self,team):
+                self.team = team
+                self.x = (random.randint(2,10)*100)
+                self.y = (random.randint(1,6)*100)
                 self.direction = "up"
-                self.rect = pygame.Rect(self.x,self.y,40,40)
+                self.rect = self.spawn()
+            def spawn(self):
+                return pygame.Rect(self.x,self.y,40,40)
 
+                
             def face_up(self):
                 self.move(0,-3)
                 self.y -= 3
@@ -27,26 +31,19 @@ class game():
             def face_right(self):
                 self.move(3,0)
                 self.x += 3
-
+            def death(self):
+                pass
+                
             def move(self,dx,dy):
                 self.rect.x += dx
                 self.rect.y += dy
                 for check_wall in Walls:#Wall collisions
                     if self.rect.colliderect(check_wall.rect):
-                        if dx > 0:#dw
-                            self.rect.right = check_wall.rect.left
-                        if dx < 0:#a
-                            self.rect.left = check_wall.rect.right
-                        if dy > 0:#s
-                            self.rect.bottom = check_wall.rect.top
-                        if dy < 0:#w
-                            self.rect.top = check_wall.rect.bottom
-                        self.x -= dx
-                        self.y -= dy
-                        Scoreboard.Increase_Score(-10)
+                        self.death()
+
         class Player(Bike):
-            def __init__(self,x,y):
-                super().__init__(x, y)
+            def __init__(self):
+                super().__init__(1)
             def Display(self):
                 self.font = pygame.font.SysFont("Sans",8)
                 screen.blit(self.font.render("{0}".format(self.x),True,(0,0,255)),((self.x+15),(self.y+5)))
@@ -103,7 +100,7 @@ class game():
 
         Walls = []
         Temp_Walls = []
-        player = Player((random.randint(2,10)*100),(random.randint(4,6)*100))
+        player = Player()
 
         def draw_map():
             map = [
