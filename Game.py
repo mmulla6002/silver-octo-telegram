@@ -11,11 +11,18 @@ class game():
         class Bike():
             def __init__(self,team):
                 self.team = team
-                self.x = (random.randint(2,10)*100)
-                self.y = (random.randint(1,6)*100)
+                self.x = 0
+                self.y = 0
                 self.direction = "up"
                 self.rect = self.spawn()
+                self.dead = False
             def spawn(self):
+                self.x = (random.randint(2,10)*100)
+                self.y = (random.randint(1,6)*100)
+                for check_spawn in All_Bikes:
+                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
+                        self.x = (random.randint(2,10)*100)
+                        self.y = (random.randint(1,6)*100)
                 return pygame.Rect(self.x,self.y,40,40)
 
                 
@@ -73,7 +80,7 @@ class game():
                 self.font = pygame.font.SysFont("Sans",18)
                 self.curr_score = 0
                 self.hi_score = 0
-            def Display(self):
+            def Display(self): #for debugging
                 screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
                 screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
             def Increase_Score(self,amount):
@@ -100,8 +107,10 @@ class game():
 
         Walls = []
         Temp_Walls = []
-        player = Player()
-
+        All_Bikes = []
+        player1 = Player()
+        All_Bikes.append(player1)
+        
         def draw_map():
             map = [
                 "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -139,13 +148,13 @@ class game():
         def press_key():
             key = pygame.key.get_pressed()
             if key[pygame.K_a] == True:
-                player.direction = "left"
+                player1.direction = "left"
             elif key[pygame.K_d] == True:
-                player.direction = "right"
+                player1.direction = "right"
             elif key[pygame.K_s] == True:
-                player.direction = "down"
+                player1.direction = "down"
             elif key[pygame.K_w] == True:
-                player.direction = "up"
+                player1.direction = "up"
 
 
 
@@ -174,26 +183,26 @@ class game():
                     Temp_Walls.remove(trail)
             for wall in Walls:
                 pygame.draw.rect(screen,(0,0,255),wall.rect)
-            pygame.draw.rect(screen,((255,255,255)),player)
+            pygame.draw.rect(screen,((255,255,255)),player1)
             pygame.draw.rect(screen,(255,0,0),Scoreboard)
             pygame.draw.rect(screen,(255,0,0),Match_Timer)
             Scoreboard.Display()
             Match_Timer.Time()
 
             press_key()
+            for bike in All_Bikes:
+                match bike.direction:
+                    case "up":
+                        bike.face_up()
+                    case "down":
+                        bike.face_down()
+                    case "left":
+                        bike.face_left()
+                    case "right":
+                        bike.face_right()
 
-            match player.direction:
-                case "up":
-                    player.face_up()
-                case "down":
-                    player.face_down()
-                case "left":
-                    player.face_left()
-                case "right":
-                    player.face_right()
-
-            Trail(((player.x)+15,(player.y)+15),10,player)
-            player.Display()
+                Trail(((bike.x)+15,(bike.y)+15),10,bike)
+            player1.Display()
             self.clock.tick(60)
             if Match_Timer.paused == False:
                 Match_Timer.tick += 1
