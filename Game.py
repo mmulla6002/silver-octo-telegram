@@ -47,15 +47,21 @@ class game():
                 for check_wall in Walls:#Wall collisions
                     if self.rect.colliderect(check_wall.rect):
                         self.death()
-
-        class Player(Bike):
-            def __init__(self):
-                super().__init__(1)
-            def Display(self):
+                        
+            def Display(self):#for debugging
                 self.font = pygame.font.SysFont("Sans",8)
                 screen.blit(self.font.render("{0}".format(self.x),True,(0,0,255)),((self.x+15),(self.y+5)))
                 screen.blit(self.font.render("{0}".format(self.y),True,(0,0,255)),((self.x+15),(self.y+15)))
 
+        class Player(Bike):
+            def __init__(self,team):
+                super().__init__(team)
+
+
+        class AI_Bike(Bike):
+            def __init__(self):
+                super().__init__(2)
+                self.direction = "down"
 
 
 
@@ -108,7 +114,7 @@ class game():
         Walls = []
         Temp_Walls = []
         All_Bikes = []
-        player1 = Player()
+        player1 = Player(1)
         All_Bikes.append(player1)
         
         def draw_map():
@@ -183,9 +189,12 @@ class game():
                     Temp_Walls.remove(trail)
             for wall in Walls:
                 pygame.draw.rect(screen,(0,0,255),wall.rect)
-            pygame.draw.rect(screen,((255,255,255)),player1)
             pygame.draw.rect(screen,(255,0,0),Scoreboard)
             pygame.draw.rect(screen,(255,0,0),Match_Timer)
+            for check_alive in All_Bikes:
+                if check_alive.dead == False:
+                    pygame.draw.rect(screen,((255,255,255)),check_alive)
+                    check_alive.Display()
             Scoreboard.Display()
             Match_Timer.Time()
 
@@ -202,7 +211,8 @@ class game():
                         bike.face_right()
 
                 Trail(((bike.x)+15,(bike.y)+15),10,bike)
-            player1.Display()
+                
+
             self.clock.tick(60)
             if Match_Timer.paused == False:
                 Match_Timer.tick += 1
