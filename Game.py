@@ -4,7 +4,7 @@ class game():
     def __init__(self):
         pygame.init()
         global screen 
-        screen = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)
+        screen = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)#creates pygame window, scales to fullscreen
         self.clock = pygame.time.Clock()
     
     def game(self):
@@ -18,7 +18,7 @@ class game():
                 self.dead = False
             def spawn(self):
                 self.x = (random.randint(2,10)*100)
-                self.y = (random.randint(1,6)*100)
+                self.y = (random.randint(5,6)*100)
                 for check_spawn in All_Bikes:
                     while (self.x,self.y) == (check_spawn.x,check_spawn.y):
                         self.x = (random.randint(2,10)*100)
@@ -62,6 +62,14 @@ class game():
             def __init__(self):
                 super().__init__(2)
                 self.direction = "down"
+            def spawn(self):
+                self.x = (random.randint(2,10)*100)
+                self.y = (random.randint(1,2)*100)
+                for check_spawn in All_Bikes:
+                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
+                        self.x = (random.randint(2,10)*100)
+                        self.y = (random.randint(1,2)*100)
+                return pygame.Rect(self.x,self.y,40,40)
 
 
 
@@ -161,6 +169,17 @@ class game():
                 player1.direction = "down"
             elif key[pygame.K_w] == True:
                 player1.direction = "up"
+            elif key[pygame.K_p] == True:
+                pass
+            if player2 in All_Bikes:
+                elif key[pygame.K_UP] == True:
+                    player2.direction = "up"
+                elif key[pygame.K_DOWN] == True:
+                    player2.direction = "down"
+                elif key[pygame.K_LEFT] == True:
+                    player2.direction = "left"
+                elif key[pygame.K_RIGHT] == True:
+                    player2.direction = "right"
 
 
 
@@ -187,10 +206,12 @@ class game():
                 except AttributeError:
                     Walls.append(trail)
                     Temp_Walls.remove(trail)
+                    
             for wall in Walls:
                 pygame.draw.rect(screen,(0,0,255),wall.rect)
             pygame.draw.rect(screen,(255,0,0),Scoreboard)
             pygame.draw.rect(screen,(255,0,0),Match_Timer)
+            
             for check_alive in All_Bikes:
                 if check_alive.dead == False:
                     pygame.draw.rect(screen,((255,255,255)),check_alive)
