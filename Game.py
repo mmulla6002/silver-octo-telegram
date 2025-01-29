@@ -16,17 +16,17 @@ class game():
                 self.rect = pygame.Rect(self.x,self.y,40,40)
 
             def face_up(self):
-                self.move(0,-3)
-                self.y -= 3
+                self.move(0,-2)
+                self.y -= 2
             def face_down(self):
-                self.move(0,3)
-                self.y += 3
+                self.move(0,2)
+                self.y += 2
             def face_left(self):
-                self.move(-3,0)
-                self.x -= 3
+                self.move(-2,0)
+                self.x -= 2
             def face_right(self):
-                self.move(3,0)
-                self.x += 3
+                self.move(2,0)
+                self.x += 2
 
             def move(self,dx,dy):
                 self.rect.x += dx
@@ -196,6 +196,8 @@ class game():
                     player.face_right()
 
             Trail(((player.x)+15,(player.y)+15),10,player)
+            if player.x % 40 == 0 and player.y % 40 == 0:
+                a-star.maze[player.x/40][player.y/40] = 1
             player.Display()
             self.clock.tick(60)
             if Match_Timer.paused == False:
