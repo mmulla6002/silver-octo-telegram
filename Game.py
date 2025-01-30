@@ -5,7 +5,7 @@ class game():
         pygame.init()
         global screen 
         screen = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)#creates pygame window, scales to fullscreen
-        self.clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()#clock object to handle time
     
     def game(self):
         class Bike():
@@ -14,39 +14,39 @@ class game():
                 self.x = 0
                 self.y = 0
                 self.direction = "up"
-                self.rect = self.spawn()
+                self.rect = self.Spawn()
                 self.dead = False
-            def spawn(self):
-                self.x = (random.randint(2,10)*100)
-                self.y = (random.randint(5,6)*100)
+            def Spawn(self):#can also be used for respawning
+                self.x = (random.randint(2,10)*100) + 20#rectangle draws from top left, we want to consider coordinates from center
+                self.y = (random.randint(5,6)*100) + 20
                 for check_spawn in All_Bikes:
-                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
-                        self.x = (random.randint(2,10)*100)
-                        self.y = (random.randint(1,6)*100)
-                return pygame.Rect(self.x,self.y,40,40)
+                    while (self.x - 20,self.y - 20) == (check_spawn.x - 20,check_spawn.y - 20):
+                        self.x = (random.randint(2,10)*100) + 20
+                        self.y = (random.randint(1,6)*100) + 20
+                return pygame.Rect(self.x - 20,self.y - 20,40,40)
 
                 
-            def face_up(self):
-                self.move(0,-3)
-                self.y -= 3
-            def face_down(self):
-                self.move(0,3)
-                self.y += 3
-            def face_left(self):
-                self.move(-3,0)
-                self.x -= 3
-            def face_right(self):
-                self.move(3,0)
-                self.x += 3
-            def death(self):
+            def FaceUp(self):
+                self.Move(0,-2)
+                self.y -= 2
+            def FaceDown(self):
+                self.Move(0,2)
+                self.y += 2
+            def FaceLeft(self):
+                self.Move(-2,0)
+                self.x -= 2
+            def FaceRight(self):
+                self.Move(2,0)
+                self.x += 2
+            def Death(self):
                 pass
                 
-            def move(self,dx,dy):
+            def Move(self,dx,dy):
                 self.rect.x += dx
                 self.rect.y += dy
                 for check_wall in Walls:#Wall collisions
                     if self.rect.colliderect(check_wall.rect):
-                        self.death()
+                        self.Death()
                         
             def Display(self):#for debugging
                 self.font = pygame.font.SysFont("Sans",8)
@@ -62,14 +62,37 @@ class game():
             def __init__(self):
                 super().__init__(2)
                 self.direction = "down"
-            def spawn(self):
-                self.x = (random.randint(2,10)*100)
-                self.y = (random.randint(1,2)*100)
+                self.targetx = 0
+                self.targety = 0
+            def Spawn(self):
+                self.x = (random.randint(2,10)*100) + 20
+                self.y = (random.randint(1,2)*100) + 20
                 for check_spawn in All_Bikes:
-                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
-                        self.x = (random.randint(2,10)*100)
-                        self.y = (random.randint(1,2)*100)
-                return pygame.Rect(self.x,self.y,40,40)
+                    while (self.x - 20,self.y - 20) == (check_spawn.x - 20,check_spawn.y - 20):
+                        self.x = (random.randint(2,10)*100) + 20
+                        self.y = (random.randint(1,2)*100) + 20
+                return pygame.Rect(self.x - 20,self.y - 20,40,40)
+                
+            def TargetPos(self,player):
+                self.targetx = player.x
+                self.targety = player.y
+                match player.direction:
+                    case "up":
+                        pass
+                    case "down":
+                        pass
+                    case "left":
+                        pass
+                    case "right":
+                        pass
+
+            def PlayerFacingUp(self,player):
+                distance = (player.x - self.x) + (player.y - self.y)
+                if player.y > 100:
+                    self.targety -= distance
+                    while self.targety < 60:
+                        self.targety += 40
+                
 
 
 
@@ -125,41 +148,13 @@ class game():
         player1 = Player(1)
         All_Bikes.append(player1)
         
-        def draw_map():
-            map = [
-                "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-                "W                              W",
-                "W                              W",
-                "W  L                           W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "W                              W",
-                "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-            ]
+        def DrawMap():
+            Wall((0,0),1280,30)
+            Wall((0,690),1280,30)
+            Wall((0,0),30,720)
+            Wall((1250,0),30,720)
 
-            x = 0
-            y = 0
-            for row in map:
-                for column in row:
-                    if column == "W":
-                        Wall((x,y),40,40)
-                    elif column == "L":
-                        haha = pygame.Rect(x,y,40,40)
-                    x += 40
-                y += 40
-                x = 0
-
-        def press_key():
+        def PressKey():
             key = pygame.key.get_pressed()
             if key[pygame.K_a] == True:
                 player1.direction = "left"
@@ -186,7 +181,7 @@ class game():
         Scoreboard = Score()
         Match_Timer = Timer()
         game = True
-        draw_map()
+        DrawMap()
         while game:
 
         
@@ -219,17 +214,17 @@ class game():
             Scoreboard.Display()
             Match_Timer.Time()
 
-            press_key()
+            PressKey()
             for bike in All_Bikes:
                 match bike.direction:
                     case "up":
-                        bike.face_up()
+                        bike.FaceUp()
                     case "down":
-                        bike.face_down()
+                        bike.FaceDown()
                     case "left":
-                        bike.face_left()
+                        bike.FaceLeft()
                     case "right":
-                        bike.face_right()
+                        bike.FaceRight()
 
                 Trail(((bike.x)+15,(bike.y)+15),10,bike)
                 
