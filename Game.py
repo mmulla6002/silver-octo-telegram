@@ -90,8 +90,12 @@ class game():
                 distance = (player.x - self.x) + (player.y - self.y)
                 if player.y > 100:
                     self.targety -= distance
+                    path = a-star.main(self.x//40, self.y//40, self.targetx//40, self.targety//40)
                     while self.targety < 60:
                         self.targety += 40
+                        path = a-star.main(self.x//40, self.y//40, self.targetx//40, self.targety//40)
+
+                    if 
                 
 
 
