@@ -76,6 +76,8 @@ def astar(maze, start, end):
             # Append
             children.append(new_node)
 
+        if len(children) == 0:
+            return False
         # Loop through children
         for child in children:
 
@@ -104,10 +106,9 @@ def main(start_x, start_y, end_x, end_y):
         start = (start_y,start_x)
         end = (end_y,end_x)
         path = astar(maze, start, end)
-            for value in path:
-            print(value[1],value[0])
+        return path
     else:
-        pass
+        return False
 #new maze is 32x18
 maze = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
