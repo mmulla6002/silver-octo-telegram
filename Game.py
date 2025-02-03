@@ -14,16 +14,17 @@ class game():
                 self.x = 0
                 self.y = 0
                 self.direction = "up"
+                self.next = "up"#buffer inputs since can only turn at junctions
                 self.rect = self.Spawn()
                 self.dead = False
             def Spawn(self):#can also be used for respawning
-                self.x = (random.randint(2,10)*100) + 20#rectangle draws from top left, we want to consider coordinates from center
-                self.y = (random.randint(5,6)*100) + 20
+                self.x = (random.randint(2,10)*100)
+                self.y = (random.randint(5,6)*100)
                 for check_spawn in All_Bikes:
-                    while (self.x - 20,self.y - 20) == (check_spawn.x - 20,check_spawn.y - 20):
-                        self.x = (random.randint(2,10)*100) + 20
-                        self.y = (random.randint(1,6)*100) + 20
-                return pygame.Rect(self.x - 20,self.y - 20,40,40)
+                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
+                        self.x = (random.randint(2,10)*100)
+                        self.y = (random.randint(1,6)*100)
+                return pygame.Rect(self.x,self.y,40,40)
 
                 
             def FaceUp(self):
@@ -65,13 +66,13 @@ class game():
                 self.targetx = 0
                 self.targety = 0
             def Spawn(self):
-                self.x = (random.randint(2,10)*100) + 20
-                self.y = (random.randint(1,2)*100) + 20
+                self.x = (random.randint(2,10)*100)
+                self.y = (random.randint(1,2)*100)
                 for check_spawn in All_Bikes:
-                    while (self.x - 20,self.y - 20) == (check_spawn.x - 20,check_spawn.y - 20):
-                        self.x = (random.randint(2,10)*100) + 20
-                        self.y = (random.randint(1,2)*100) + 20
-                return pygame.Rect(self.x - 20,self.y - 20,40,40)
+                    while (self.x,self.y) == (check_spawn.x,check_spawn.y):
+                        self.x = (random.randint(2,10)*100)
+                        self.y = (random.randint(1,2)*100)
+                return pygame.Rect(self.x,self.y,40,40)
                 
             def TargetPos(self,player):
                 self.targetx = player.x
@@ -108,10 +109,10 @@ class game():
                 self.tick = 0
                 self.round = 0
                 self.paused = False
-            def Display(self):
+            def Display(self):#displays match time and current round
                 screen.blit(self.font.render("Match Time: {0}".format(self.time),True,(0,0,255)),(400,19))
                 screen.blit(self.font.render("Current Round: {0}".format(self.round),True,(0,0,255)),(400,0))
-            def Time(self):
+            def Time(self):Calculates time to show on Display
                 self.time = int(self.tick/60)
                 self.Display()
 
@@ -121,13 +122,13 @@ class game():
                 self.font = pygame.font.SysFont("Sans",18)
                 self.curr_score = 0
                 self.hi_score = 0
-            def Display(self): #for debugging
+            def Display(self):
                 screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
                 screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
             def Increase_Score(self,amount):
                 self.curr_score += amount
                 if self.curr_score < 0:
-                    self.curr_score = -1
+                    self.curr_score = 0
                 if self.curr_score > self.hi_score:
                     self.New_Hi_Score()
                 self.Display()
@@ -135,67 +136,66 @@ class game():
                 self.hi_score = self.curr_score
 
 
-        class Wall():
+        class Wall(): #create wall object
             def __init__(self,pos,length, height):
                 Temp_Walls.append(self)
+                self.parent = None #walls do not have a parent
                 self.rect = pygame.Rect(pos[0],pos[1],length,height)
 
 
-        class Trail(Wall):
+        class Trail(Wall): #create trail object
             def __init__(self, pos, size, parent):
                 super().__init__(pos, size, size)
-                self.parent = parent
+                self.parent = parent #parent is used to keep track of which bike created the trail
 
         Walls = []
         Temp_Walls = []
         All_Bikes = []
-        player1 = Player(1)
+        player1 = Player(1) #pass in 1 for player 1, 2 for player 2
         All_Bikes.append(player1)
         
-        def DrawMap():
+        def DrawMap(): #Border walls
             Wall((0,0),1280,30)
             Wall((0,690),1280,30)
             Wall((0,0),30,720)
             Wall((1250,0),30,720)
 
-        def PressKey():
+        def PressKey():#Handles all keyboard inputs
             key = pygame.key.get_pressed()
-            if key[pygame.K_a] == True:
-                player1.direction = "left"
-            elif key[pygame.K_d] == True:
-                player1.direction = "right"
-            elif key[pygame.K_s] == True:
-                player1.direction = "down"
-            elif key[pygame.K_w] == True:
-                player1.direction = "up"
-            elif key[pygame.K_p] == True:
+            if key[pygame.K_a]:#player 1 left
+                player1.next = "left"
+            elif key[pygame.K_d]:#player 1 right
+                player1.next = "right"
+            elif key[pygame.K_s]:#player 1 down
+                player1.next = "down"
+            elif key[pygame.K_w]:#player 1 up
+                player1.next = "up"
+            if key[pygame.K_p] or key[pygame.K_ESCAPE]:#pause game
                 pass
-            if player2 in All_Bikes:
-                elif key[pygame.K_UP] == True:
-                    player2.direction = "up"
-                elif key[pygame.K_DOWN] == True:
-                    player2.direction = "down"
-                elif key[pygame.K_LEFT] == True:
-                    player2.direction = "left"
-                elif key[pygame.K_RIGHT] == True:
-                    player2.direction = "right"
+            if player2 in All_Bikes:#enable player 2 inputs if in 2P
+                elif key[pygame.K_UP]:
+                    player2.next = "up"
+                elif key[pygame.K_DOWN]:
+                    player2.next = "down"
+                elif key[pygame.K_LEFT]:
+                    player2.next = "left"
+                elif key[pygame.K_RIGHT]:
+                    player2.next = "right"
 
 
-
+        #game starts here
         Scoreboard = Score()
         Match_Timer = Timer()
         game = True
         DrawMap()
         while game:
 
-        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
                     pygame.quit(); sys.exit()
 
-        
-            screen.fill((0,0,0))#remove this line to leave trail
+            screen.fill((0,0,0))
 
             for trail in Temp_Walls:
                 try:
@@ -211,15 +211,19 @@ class game():
             pygame.draw.rect(screen,(255,0,0),Scoreboard)
             pygame.draw.rect(screen,(255,0,0),Match_Timer)
             
-            for check_alive in All_Bikes:
+            for check_alive in All_Bikes:#only draw bikes that havent been eliminated
                 if check_alive.dead == False:
                     pygame.draw.rect(screen,((255,255,255)),check_alive)
                     check_alive.Display()
+                    
             Scoreboard.Display()
             Match_Timer.Time()
 
             PressKey()
+            
             for bike in All_Bikes:
+                if bike.x % 40 == 0 and bike.y % 40 ==0:#update direction if at a junction
+                    bike.direction = bike.next
                 match bike.direction:
                     case "up":
                         bike.FaceUp()
@@ -230,11 +234,14 @@ class game():
                     case "right":
                         bike.FaceRight()
 
-                Trail(((bike.x)+15,(bike.y)+15),10,bike)
+                if bike.x % 10 == 0 and bike.y % 10 == 0:#trail draws
+                    Trail(((bike.x)+15,(bike.y)+15),10,bike)
+                    a-star.maze[bike.y][bike.x] = 1
+                
                 
 
-            self.clock.tick(60)
-            if Match_Timer.paused == False:
+            self.clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
+            if Match_Timer.paused == False:#match timer will not continue to tick when game is paused
                 Match_Timer.tick += 1
         
 
