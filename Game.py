@@ -75,20 +75,29 @@ class game():
                 return pygame.Rect(self.x,self.y,40,40)
                 
             def TargetPos(self,player):
+                if (abs(player.x - self.x) < 80) and (abs(player.y - self.y) < 80):
+                    self.CloseEncounter()
+                    continue
+                path = a-star.main(self.x//40, self.y//40, player.x//40, player.y//40)
+                if path == None:
+                    self.Retreat()
+                    continue
                 self.targetx = player.x
                 self.targety = player.y
-                match player.direction:
-                    case "up":
-                        pass
-                    case "down":
-                        pass
-                    case "left":
-                        pass
-                    case "right":
-                        pass
-
-            def PlayerFacingUp(self,player):
-                distance = (player.x - self.x) + (player.y - self.y)
+                vector_x = (player.x - self.x)
+                vector_y = (player.y - self.y)
+                self.targetx += vector_x
+                self.targety += vector_y
+                
+                while self.targetx > 1240:
+                    self.targetx -= 40
+                while self.targetx < 0:
+                    self.targetx += 40
+                while self.targety > 680:
+                    self.targety -= 40
+                while self.targety < 0:
+                    self.targetx == 40
+                    
                 if player.y > 100:
                     self.targety -= distance
                     path = a-star.main(self.x//40, self.y//40, self.targetx//40, self.targety//40)
@@ -202,9 +211,12 @@ class game():
                     if trail.parent.rect.colliderect(trail.rect) == False:
                         Walls.append(trail)
                         Temp_Walls.remove(trail)
+                        if ((trail.x - 15) % 40) == 0 and ((trail.y - 15) % 40) == 0:
+                            a-star.maze[trail.y // 40][trail.x // 40] = 1
                 except AttributeError:
                     Walls.append(trail)
                     Temp_Walls.remove(trail)
+
                     
             for wall in Walls:
                 pygame.draw.rect(screen,(0,0,255),wall.rect)
@@ -236,7 +248,6 @@ class game():
 
                 if bike.x % 10 == 0 and bike.y % 10 == 0:#trail draws
                     Trail(((bike.x)+15,(bike.y)+15),10,bike)
-                    a-star.maze[bike.y][bike.x] = 1
                 
                 
 
