@@ -73,8 +73,10 @@ class game():
                         self.x = (random.randint(2,10)*100)
                         self.y = (random.randint(1,2)*100)
                 return pygame.Rect(self.x,self.y,40,40)
-                
-            def TargetPos(self,player):
+            def SetTarget(self,vector_x,vector_y):
+                self.targetx = self.x + vector_x
+                self.targety = self.y + vector_y
+            def CalculateTarget(self,player):
                 if (abs(player.x - self.x) < 80) and (abs(player.y - self.y) < 80):
                     self.CloseEncounter()
                     continue
@@ -82,24 +84,19 @@ class game():
                 if path == None:
                     self.Retreat()
                     continue
-                self.targetx = player.x
-                self.targety = player.y
                 vector_x = (player.x - self.x)
                 vector_y = (player.y - self.y)
-                self.targetx += vector_x
-                self.targety += vector_y
+                self.SetTarget(vector_x,vector_y)
                 
-                while self.targetx > 1240:
-                    self.targetx -= 40
-                while self.targetx < 0:
-                    self.targetx += 40
-                while self.targety > 680:
-                    self.targety -= 40
-                while self.targety < 0:
-                    self.targetx == 40
+                while self.targetx > 1240 or self.targetx < 0:
+                    vector_x -= (vector_x/(vector_x + (abs(1240 - self.targetx))))
+                    self.SetTarget(vector_x,vector_y)
+                    
+                while self.targety > 680 or self.targety < 0:
+                    vector_y -= (vector_y/(vector_y + (abs(680 - self.targety))))
+                    self.SetTarget(vector_x,vector_y)
                     
                 if player.y > 100:
-                    self.targety -= distance
                     path = a-star.main(self.x//40, self.y//40, self.targetx//40, self.targety//40)
                     while self.targety < 60:
                         self.targety += 40
