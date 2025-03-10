@@ -1,13 +1,13 @@
-from Config import *
+###MOVE ALL CLASSES OUT OF RUN()
+###REMOVE WHILE LOOP, DISPLAY UPDATE AND CLOCK AS ALREADY ACTIVE IN MAIN
 
+from Config import *
+import MAIN
 class game():
     def __init__(self):
-        pygame.init()
-        global screen 
-        screen = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)#creates pygame window, scales to fullscreen
-        self.clock = pygame.time.Clock()#clock object to handle time
-    
-    def game(self):
+        self.active = False
+        
+    def run(self):
         class Bike():
             def __init__(self,team):
                 self.team = team
@@ -51,8 +51,8 @@ class game():
                         
             def Display(self):#for debugging
                 self.font = pygame.font.SysFont("Sans",8)
-                screen.blit(self.font.render("{0}".format(self.x),True,(0,0,255)),((self.x+15),(self.y+5)))
-                screen.blit(self.font.render("{0}".format(self.y),True,(0,0,255)),((self.x+15),(self.y+15)))
+                Main.screen.blit(self.font.render("{0}".format(self.x),True,(0,0,255)),((self.x+15),(self.y+5)))
+                Main.screen.blit(self.font.render("{0}".format(self.y),True,(0,0,255)),((self.x+15),(self.y+15)))
 
         class Player(Bike):
             def __init__(self,team):
@@ -116,8 +116,8 @@ class game():
                 self.round = 0
                 self.paused = False
             def Display(self):#displays match time and current round
-                screen.blit(self.font.render("Match Time: {0}".format(self.time),True,(0,0,255)),(400,19))
-                screen.blit(self.font.render("Current Round: {0}".format(self.round),True,(0,0,255)),(400,0))
+                Main.screen.blit(self.font.render("Match Time: {0}".format(self.time),True,(0,0,255)),(400,19))
+                Main.screen.blit(self.font.render("Current Round: {0}".format(self.round),True,(0,0,255)),(400,0))
             def Time(self):Calculates time to show on Display
                 self.time = int(self.tick/60)
                 self.Display()
@@ -129,8 +129,8 @@ class game():
                 self.curr_score = 0
                 self.hi_score = 0
             def Display(self):
-                screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
-                screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
+                Main.screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
+                Main.screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
             def Increase_Score(self,amount):
                 self.curr_score += amount
                 if self.curr_score < 0:
@@ -201,7 +201,7 @@ class game():
                     game = False
                     pygame.quit(); sys.exit()
 
-            screen.fill((0,0,0))
+            Main.screen.fill((0,0,0))
 
             for trail in Temp_Walls:
                 try:
@@ -248,7 +248,7 @@ class game():
                 
                 
 
-            self.clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
+            Main.clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
             if Match_Timer.paused == False:#match timer will not continue to tick when game is paused
                 Match_Timer.tick += 1
         
