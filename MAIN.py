@@ -20,10 +20,12 @@ def run():
             if event.type == pygame.QUIT:
                 game = False
                 pygame.quit(); sys.exit()
-        for active_file in game_event_files:
+                
+        for active_file in game_event_files:#run the currently open file
             if active_file.active = True:
                 active_file.run()
-        clock.tick(60)
+
+        clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
         pygame.display.update()
 
 if __name__ == "__main__":
