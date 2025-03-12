@@ -1,10 +1,7 @@
 import pygame
 class Button():
-    def __init__(self,x,y,image,scale):
-        width = image.get_width()
-        height = image.get_height()
-        self.image = pygame.transform.scale(image,(int(width * scale), int(height * scale)))
-        self.rect = self.image.get_rect()
+    def __init__(self,x,y,width,height):
+        self.rect = pygame.Rect(x,y,width,height)
         self.rect.topleft = (x,y)
         self.clicked = False
         self.hover = False
@@ -15,12 +12,7 @@ class Button():
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
                 button_clicked = True
-            #if self.hover == False:
-                #self.hover = True
-                #print("HOVER")
-        #else:
-            #self.hover = False
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
-        screen.blit(self.image,(self.rect.x,self.rect.y))
+        pygame.draw.rect(screen,(colour),self)
         return button_clicked
