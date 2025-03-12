@@ -121,20 +121,39 @@ class Score():
         self.rect = pygame.Rect(150,0,200,30)
         self.font = pygame.font.SysFont("Sans",18)
         self.curr_score = 0
+    def Display(self):
+        MAIN.screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
+        
+class Score_Endless(Score):
+    def __init__(self):
+        super().__init__()
         self.hi_score = 0
     def Display(self):
-        Main.screen.blit(self.font.render("Score: {0}".format(self.curr_score),True,(0,0,255)),(41, 19))
-        Main.screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
+        super().Display(self)
+        MAIN.screen.blit(self.font.render("High Score: {0}".format(self.hi_score),True,(0,0,255)),(41,0))
     def Increase_Score(self,amount):
         self.curr_score += amount
         if self.curr_score < 0:
             self.curr_score = 0
         if self.curr_score > self.hi_score:
             self.New_Hi_Score()
-        self.Display()
     def New_Hi_Score(self):
         self.hi_score = self.curr_score
 
+class Score_Multiplayer(Score):
+    def __init__(self):
+        super().__init__()
+        self.t1_score = 0
+        self.t2_score = 0
+        self.curr_score = "0:0"
+    def T1_Win(self):
+        self.t1_score += 1
+        self.Set_Curr_Score()
+    def T2_Win(self):
+        self.t2_score += 1
+        self.Set_Curr_Score()
+    def Set_Curr_Score(self):
+        self.curr_score = (str(self.t1_score)+":"+str(self.t2_score))
 
 class Wall(): #create wall object
     def __init__(self,pos,length, height):
@@ -181,69 +200,3 @@ def PressKey():#Handles all keyboard inputs
 Walls = []
 Temp_Walls = []
 All_Players = []
-##########################################################################################
-
-##########################################################################################
-
-##########################################################################################
-
-
-
-        self.DrawMap()
-        Match_Timer.paused = True
-        if Match_Timer.paused == False:
-            Main.screen.fill((0,0,0))
-
-            for trail in Temp_Walls:
-                try:
-                    if trail.parent.rect.colliderect(trail.rect) == False:
-                        Walls.append(trail)
-                        Temp_Walls.remove(trail)
-                        if ((trail.x - 15) % 40) == 0 and ((trail.y - 15) % 40) == 0:
-                            a-star.maze[trail.y // 40][trail.x // 40] = 1
-                except AttributeError:
-                    Walls.append(trail)
-                    Temp_Walls.remove(trail)
-
-                    
-            for wall in Walls:
-                pygame.draw.rect(MAIN.screen,(0,0,255),wall.rect)
-            pygame.draw.rect(MAIN.screen,(255,0,0),Scoreboard)
-            pygame.draw.rect(MAIN.screen,(255,0,0),Match_Timer)
-
-                    
-            Scoreboard.Display()
-            Match_Timer.Time()
-
-            self.PressKey()
-            
-            for person in All_Players:#only draw players that haven't been eliminated
-                if person.dead == False:
-                    pygame.draw.rect(MAIN.screen,((255,255,255)),check_alive)
-                    check_alive.Display()
-                else:
-                    continue
-                if person.x % 40 == 0 and person.y % 40 ==0:#update direction if at a junction
-                    person.direction = person.next
-                match person.direction:
-                    case "up":
-                        person.FaceUp()
-                    case "down":
-                        person.FaceDown()
-                    case "left":
-                        person.FaceLeft()
-                    case "right":
-                        person.FaceRight()
-
-                if person.x % 10 == 0 and person.y % 10 == 0 and person.dead == False:#trail draws
-                    Trail(((person.x)+15,(person.y)+15),10,person)
-                
-                
-            if Match_Timer.paused == False:#match timer will not continue to tick when game is paused
-                Match_Timer.tick += 1
-        
-    def close(): #closing the file, emptying lists and variables, making sure nothing is being drawn on the screeen, etc.
-        Walls = []
-        Temp_Walls = []
-        All_Players = []
-        self.active = False
