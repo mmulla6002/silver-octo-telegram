@@ -1,10 +1,13 @@
 from Config import *
-
+import MAIN_MENU
+Main_Menu = MAIN_MENU.Main_Menu()
 class Game():
     def __init__(self, screen, clock, game_length):
         global screen
         global clock
         self.game_length = game_length
+        self.font = pygame.font.SysFont("Sans", 18)
+        self.running = False
     
     def run(self):
         class Player():
@@ -67,7 +70,6 @@ class Game():
                 screen.blit(self.font.render("Current Round: {0}".format(self.round),True,(0,0,255)),(400,0))
             def Time(self):Calculates time to show on Display
                 self.time = int(self.tick/60)
-                self.Display()
 
         class Score():
             def __init__(self):
@@ -107,6 +109,9 @@ class Game():
         player2 = Player(2)
         All_Players.append(player1)
         All_Players.append(player2)
+        Pause_Button = BUTTON.Button(0,0,100,30,(0,255,0))
+        Resume_Button = BUTTON.Button(500,250,100,50,(0,255,0))
+        Quit_Button = BUTTON.Button(500,400,100,50,(255,0,0))
         
         def DrawMap(): #Border walls
             Wall((0,0),1280,30)
@@ -125,7 +130,7 @@ class Game():
             elif key[pygame.K_w] and player1.direction != "down":#player 1 up
                 player1.next = "up"
             if key[pygame.K_p] or key[pygame.K_ESCAPE]:#pause game
-                pass
+                Match_Timer.paused = True
             if key[pygame.K_UP] and player2.direction != "down":
                 player2.next = "up"
             elif key[pygame.K_DOWN] and player2.direction != "up":
@@ -135,13 +140,22 @@ class Game():
             elif key[pygame.K_RIGHT] and player2.direction != "left":
                 player2.next = "right"
 
-
+        def pause_game(Match_Timer, Resume_Button, Quit_Button):
+            screen.blit(self.font.render("Resume",True,(255,0,255)),(501, 201))
+            screen.blit(self.font.render("Return to main menu",True,(0,0,255)),(501, 201))
+            if Resume_Button.draw(screen):
+                Match_Timer.paused = False
+            if Quit_Button.draw(screen):
+                self.running = False
+                Main_Menu.run(screen,clock)
+                
+                
         #game starts here
         Scoreboard = Score()
         Match_Timer = Timer()
-        game = True
+        self.running = True
         DrawMap()
-        while game:
+        while self.running:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -150,33 +164,36 @@ class Game():
 
             screen.fill((0,0,0))
             clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
-            if Match_Timer.paused == False:#match timer will not continue to tick when game is paused
-                Match_Timer.tick += 1
-                for trail in Temp_Walls:
-                    try:
-                        if trail.parent.rect.colliderect(trail.rect) == False:
-                            Walls.append(trail)
-                            Temp_Walls.remove(trail)
-                    except AttributeError:
+            for trail in Temp_Walls:
+                try:
+                    if trail.parent.rect.colliderect(trail.rect) == False:
                         Walls.append(trail)
                         Temp_Walls.remove(trail)
+                except AttributeError:
+                    Walls.append(trail)
+                    Temp_Walls.remove(trail)
 
                     
-                for wall in Walls:
-                    pygame.draw.rect(screen,(0,0,255),wall.rect)
-                pygame.draw.rect(screen,(255,0,0),Scoreboard)
-                pygame.draw.rect(screen,(255,0,0),Match_Timer)
-            
-                for check_alive in All_Bikes:#only draw bikes that havent been eliminated
-                    if check_alive.dead == False:
-                        pygame.draw.rect(screen,((255,255,255)),check_alive)
-                        check_alive.Display()
+            for wall in Walls:
+                pygame.draw.rect(screen,(0,0,255),wall.rect)
+            pygame.draw.rect(screen,(255,0,0),Scoreboard)
+            pygame.draw.rect(screen,(255,0,0),Match_Timer)
+            screen.blit(self.font.render("Pause",True,(255,0,255)),(0,1))
+            if Pause_Button.draw(screen):
+                Match_Timer.paused = True
+            for check_alive in All_Bikes:#only draw bikes that havent been eliminated
+                if check_alive.dead == False:
+                    pygame.draw.rect(screen,((255,255,255)),check_alive)
+                    check_alive.Display()
                     
-                Scoreboard.Display()
-                Match_Timer.Time()
+            Scoreboard.Display()
+            Match_Timer.Time()
 
-                PressKey()
-            
+            PressKey()
+            if Match_Timer.paused == True:
+                pause_game()
+            else:
+                Match_Timer.tick += 1
                 for bike in All_Bikes:
                     if bike.x % 40 == 0 and bike.y % 40 ==0:#update direction if at a junction
                         bike.direction = bike.next
