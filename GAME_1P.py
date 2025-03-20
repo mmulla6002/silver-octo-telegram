@@ -178,15 +178,7 @@ class Game():
                 player1.next = "up"
             if key[pygame.K_p] or key[pygame.K_ESCAPE]:#pause game
                 pass
-            if player2 in All_Bikes:#enable player 2 inputs if in 2P
-                elif key[pygame.K_UP]:
-                    player2.next = "up"
-                elif key[pygame.K_DOWN]:
-                    player2.next = "down"
-                elif key[pygame.K_LEFT]:
-                    player2.next = "left"
-                elif key[pygame.K_RIGHT]:
-                    player2.next = "right"
+
 
 
         #game starts here
