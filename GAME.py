@@ -1,13 +1,11 @@
 from Config import *
 
-class game():
-    def __init__(self):
-        pygame.init()
-        global screen 
-        screen = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)#creates pygame window, scales to fullscreen
-        self.clock = pygame.time.Clock()#clock object to handle time
+class Game():
+    def __init__(self, screen, clock):
+        global screen
+        global clock
     
-    def game(self):
+    def run(self):
         class Bike():
             def __init__(self,team):
                 self.team = team
@@ -248,7 +246,7 @@ class game():
                 
                 
 
-            self.clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
+            clock.tick(60)#game's internal timer is limited to 60fps to avoid the game running faster on more powerful computers
             if Match_Timer.paused == False:#match timer will not continue to tick when game is paused
                 Match_Timer.tick += 1
         
